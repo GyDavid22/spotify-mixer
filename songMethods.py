@@ -6,29 +6,23 @@ class Songs:
         self.__year: int = int(year)
         self.__popularity: int = int(popularity)
 
-    def __getTitle(self) -> str:
+    def getTitle(self) -> str:
         return self.__title
 
-    def __getArtist(self) -> str:
+    def getArtist(self) -> str:
         return self.__artist
 
-    def __getSpotifyId(self) -> str:
+    def getSpotifyId(self) -> str:
         return self.__spotifyId
 
-    def __getYear(self) -> int:
+    def getYear(self) -> int:
         return self.__year
 
-    def __getPopularity(self) -> int:
+    def getPopularity(self) -> int:
         return self.__popularity
 
     def __str__(self) -> str:
-        return f"{self.artist} - {self.title} ({self.year})"
-
-    title = property(fget=__getTitle)
-    artist = property(fget=__getArtist)
-    spotifyId = property(fget=__getSpotifyId)
-    year = property(fget=__getYear)
-    popularity = property(fget=__getPopularity)
+        return f"{self.getArtist()} - {self.getTitle()} ({self.getYear()})"
 
 def createSongList(source: list[dict]) -> list[Songs]:
     songs: list[Songs] = []

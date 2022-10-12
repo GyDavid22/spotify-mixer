@@ -6,18 +6,18 @@ def main() -> None:
     songs: list[Songs] = createSongList(loadResps())
     yearsCount: dict[int, int] = dict()
     for i in songs:
-        if i.year in yearsCount:
-            yearsCount[i.year] += 1
+        if i.getYear() in yearsCount:
+            yearsCount[i.getYear()] += 1
         else:
-            yearsCount[i.year] = 1
+            yearsCount[i.getYear()] = 1
     years = sorted(list(yearsCount.keys()))
     for year in years:
         print(f"{year}: {yearsCount[year]}")
-    popurarityies = [ i.popularity for i in songs ]
+    popurarityies = [ i.getPopularity() for i in songs ]
     print(f"{mean(popurarityies)}, {min(popurarityies)}, {max(popurarityies)}")
-    songs.sort(key=Songs.temppop, reverse=True)
+    songs.sort(key=Songs.getPopularity, reverse=True)
     for i in songs:
-        print(f"{i}, {i.popularity}")
+        print(f"{i}, {i.getPopularity()}")
 
 
 main()
