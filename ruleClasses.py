@@ -20,6 +20,7 @@ class Rule:
         self.__finishBeforeRepeat: bool = finishBeforeRepeat
         self.__minValue: int = minValue
         self.__maxValue: int = maxValue
+        self.__onRepeat = False
         if self.__type == RuleType.YEAR:
             self.__comparefunc = songMethods.Songs.getYear
         elif self.__type == RuleType.POPULARITY:
@@ -74,9 +75,13 @@ class Rule:
     def getNext(self) -> songMethods.Songs:
         if not len(self.__subrules) == 0:
             selectedSubRule: int = random.randint(1, 100)
+            bottom: int = 1
+            top: int = 0
             for i in self.__subrules:
-                if i.getProbability() >= selectedSubRule:
+                top += i.getProbability()
+                if selectedSubRule >= bottom and selectedSubRule <= top:
                     return i.getNext()
+                bottom = top + 1
         else:
             if self.__finishBeforeRepeat:
                 selected: songMethods.Songs = self.__songsToPlay.pop(0)
