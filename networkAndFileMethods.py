@@ -2,15 +2,25 @@ import json
 import requests
 from settings import Settings
 
-def upload(uris: str):
-    url = f"https://api.spotify.com/v1/playlists/{Settings.u_pid}/tracks?uris="
+def upload(uris: str, name: str):
+    url: str = f"https://api.spotify.com/v1/users/{Settings.uid}/playlists"
+    data = json.dumps({
+        "name": name,
+        "description": "Made by PyMixer!",
+        "public": False
+        })
     header: dict[str, str] = {
-        "Authorization": f"Bearer {input('Token? ')}",
+        "Authorization": f"Bearer {Settings.wtoken}",
         "Content-Type": "application/json"
     }
+    res = requests.post(url, headers=header, data=data)
+    id = res.json()["external_urls"]["spotify"].split("/")
+    id = id[len(id) - 1]
+    url = f"https://api.spotify.com/v1/playlists/{id}/tracks?uris="
     res = requests.post(url + uris, headers=header)
 
 def getToken() -> str:
+    return Settings.rtoken
     url: str = "https://accounts.spotify.com/api/token"
     headers: dict[str, str] = {
         'grant_type': 'client_credentials',

@@ -12,7 +12,7 @@ class Mixer:
             print(f"Setting: {i.getName()}")
             for j in range(len(playlist)):
                 print(f"{j + 1:>3}.: {playlist[j]}")
-            upload(",".join([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ]))
+            upload(",".join([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ]), i.getName())
 
     def mix(root: Rule) -> list[Songs]:
         playlist: list[Songs] = []

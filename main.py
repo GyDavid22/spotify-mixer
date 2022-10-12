@@ -5,6 +5,8 @@ from songMethods import *
 import mixer
 
 def main() -> None:
+    Settings.rtoken = input("rToken? ")
+    Settings.wtoken = input("wToken? ")
     songs: list[Songs] = createSongList(networkAndFileMethods.req(Settings.pid))
     mixer.Mixer.createLists(songs)
     # yearsCount: dict[int, int] = dict()
