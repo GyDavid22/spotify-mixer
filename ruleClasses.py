@@ -8,8 +8,8 @@ class RuleType(enum.Enum):
     YEAR = 2
 
 class Rule:
-    def __init__(self, type: RuleType, probability: float, subrules: list = [], popularityMin: int = None,
-                popularityMax: int = None, yearMin: int = None, yearMax: int = None, finishBeforeRepeat: bool = True) -> None:
+    def __init__(self, type: RuleType, probability: int, subrules: list = [], minValue: int = None, maxValue: int = None,
+                 finishBeforeRepeat: bool = True) -> None:
         """Min and max values are inclusive!"""
         self.__type: RuleType = type
         self.__probability: int = probability # A number between 0 and 100 (percent value)
@@ -17,43 +17,50 @@ class Rule:
         self.__playedSongs: list[songMethods.Songs] = []
         self.__songsToPlay: list[songMethods.Songs] = []
         self.__subrules: list[Rule] = sorted(subrules, key=Rule.getProbability)
-        self.__finishBeforeRepeat = True
-        if self.__type == RuleType.POPULARITY:
-            self.__popularityMin: int = popularityMin
-            self.__popularityMax: int = popularityMax
-        elif self.__type == RuleType.YEAR:
-            self.__yearMin: int = yearMin
-            self.__yearMax: int = yearMax
-        else:
-            raise ValueError("Bad rule type")
+        self.__finishBeforeRepeat: bool = finishBeforeRepeat
+        self.__minValue: int = minValue
+        self.__maxValue: int = maxValue
+        if self.__type == RuleType.YEAR:
+            self.__comparefunc = songMethods.Songs.getYear
+        elif self.__type == RuleType.POPULARITY:
+            self.__comparefunc = songMethods.Songs.getPopularity
 
     def getProbability(self) -> int:
         return self.__probability
 
+    def getSubrules(self) -> list:
+        return self.__subrules
+
+    def getSongs(self) -> list[songMethods.Songs]:
+        return self.__songs
+
+    def getType(self) -> RuleType:
+        return self.__type
+
     def addSong(self, song: songMethods.Songs) -> None:
-        if not len(self.__subrules) == 0:
+        qualifying: bool = ((self.__minValue == None and self.__maxValue == None)
+                or (self.__minValue == None and self.__comparefunc(song) <= self.__maxValue)
+                or (self.__maxValue == None and self.__minValue <= self.__comparefunc(song))
+                or (self.__minValue <= self.__comparefunc(song) and self.__maxValue >= self.__comparefunc(song)))
+
+        if (not len(self.__subrules) == 0) and qualifying:
             for i in self.__subrules:
                 i.addSong(song)
         else:
-            if self.__type == RuleType.POPULARITY:
-                minToCompare: int = self.__popularityMin
-                maxToCompare: int = self.__popularityMax
-            elif self.__type == RuleType.YEAR:
-                minToCompare: int = self.__yearMin
-                maxToCompare: int = self.__yearMax
-            elif self.__type == RuleType.ROOT:
+            if self.__type == RuleType.ROOT:
                 raise ValueError("Don't add songs to root!")
 
-            if ((minToCompare == None and maxToCompare == None)
-                or (minToCompare == None and song.getPopularity() <= maxToCompare)
-                or (maxToCompare == None and minToCompare >= song.getPopularity())
-                or (minToCompare >= song.getPopularity() and maxToCompare <= song.getPopularity())):
+            if qualifying:
                 self.__songs.append(song)
 
     def getReady(self):
-        self.__songsToPlay = self.__songs
-        random.shuffle(self.__songsToPlay)
-        self.__playedSongs.clear()
+        if not len(self.__subrules) == 0:
+            for i in self.__subrules:
+                i.getReady()
+        else:
+            self.__songsToPlay = list(self.__songs)
+            random.shuffle(self.__songsToPlay)
+            self.__playedSongs.clear()
 
     def allSongsSelected(self) -> bool:
         if not len(self.__subrules) == 0:
