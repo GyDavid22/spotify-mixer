@@ -39,10 +39,14 @@ class Rule:
         return self.__type
 
     def addSong(self, song: songMethods.Songs) -> None:
-        qualifying: bool = ((self.__minValue == None and self.__maxValue == None)
+        qualifying: bool
+        try:
+            qualifying = ((self.__minValue == None and self.__maxValue == None)
                 or (self.__minValue == None and self.__comparefunc(song) <= self.__maxValue)
                 or (self.__maxValue == None and self.__minValue <= self.__comparefunc(song))
                 or (self.__minValue <= self.__comparefunc(song) and self.__maxValue >= self.__comparefunc(song)))
+        except:
+            qualifying = False
 
         if (not len(self.__subrules) == 0) and qualifying:
             for i in self.__subrules:

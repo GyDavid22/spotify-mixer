@@ -4,11 +4,22 @@ from settings import Settings
 
 def loadRules() -> list[PlaylistSetting]:
     return [
-        PlaylistSetting("Min90pop", Settings.pid, [
-            Rule(RuleType.POPULARITY, 100, minValue=90)
-        ]),
-        PlaylistSetting("Only2022and2021", Settings.pid, [
-            Rule(RuleType.YEAR, 50, minValue=2022, maxValue=2022),
-            Rule(RuleType.YEAR, 50, minValue=2021, maxValue=2021)
+        PlaylistSetting("HotAC", Settings.pid, [
+            Rule(RuleType.YEAR, 50, minValue=2020, subrules=[
+                Rule(RuleType.POPULARITY, 75, minValue=70),
+                Rule(RuleType.POPULARITY, 25, maxValue=69)
+            ]),
+            Rule(RuleType.YEAR, 18, minValue=2010, maxValue=2019, subrules=[
+                Rule(RuleType.POPULARITY, 75, minValue=70),
+                Rule(RuleType.POPULARITY, 25, maxValue=69)
+            ]),
+            Rule(RuleType.YEAR, 18, minValue=2000, maxValue=2009, subrules=[
+                Rule(RuleType.POPULARITY, 75, minValue=70),
+                Rule(RuleType.POPULARITY, 25, maxValue=69)
+            ]),
+            Rule(RuleType.YEAR, 14, maxValue=1999, subrules=[
+                Rule(RuleType.POPULARITY, 75, minValue=70),
+                Rule(RuleType.POPULARITY, 25, maxValue=69)
+            ])
         ])
     ]

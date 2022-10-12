@@ -1,10 +1,11 @@
 from statistics import mean
-from networkAndFileMethods import loadResps
+import networkAndFileMethods
+from settings import Settings
 from songMethods import *
 import mixer
 
 def main() -> None:
-    songs: list[Songs] = createSongList(loadResps())
+    songs: list[Songs] = createSongList(networkAndFileMethods.req(Settings.pid))
     mixer.Mixer.createLists(songs)
     # yearsCount: dict[int, int] = dict()
     # for i in songs:

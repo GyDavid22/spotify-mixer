@@ -1,5 +1,4 @@
-from logging import root
-from multiprocessing.spawn import prepare
+from networkAndFileMethods import upload
 from playlistSettingsClass import PlaylistSetting
 from ruleClasses import *
 from songMethods import Songs
@@ -13,6 +12,7 @@ class Mixer:
             print(f"Setting: {i.getName()}")
             for j in range(len(playlist)):
                 print(f"{j + 1:>3}.: {playlist[j]}")
+            upload(",".join([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ]))
 
     def mix(root: Rule) -> list[Songs]:
         playlist: list[Songs] = []

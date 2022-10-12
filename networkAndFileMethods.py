@@ -2,6 +2,14 @@ import json
 import requests
 from settings import Settings
 
+def upload(uris: str):
+    url = f"https://api.spotify.com/v1/playlists/{Settings.u_pid}/tracks?uris="
+    header: dict[str, str] = {
+        "Authorization": f"Bearer {input('Token? ')}",
+        "Content-Type": "application/json"
+    }
+    res = requests.post(url + uris, headers=header)
+
 def getToken() -> str:
     url: str = "https://accounts.spotify.com/api/token"
     headers: dict[str, str] = {
