@@ -25,7 +25,7 @@ def upload(uris: str, name: str):
     id: str = id[len(id) - 1]
     url = f"https://api.spotify.com/v1/playlists/{id}/tracks?uris="
     res = requests.post(url + uris, headers=header)
-    if not res.status_code == 200:
+    if not res.status_code == 201:
         raise ValueError(res.text)
 
 def authenticate() -> None:
@@ -90,16 +90,23 @@ def download(playlistId: str) -> list[dict]:
     }
     results: list = []
     hasNext: bool = True
-     # The first response is different for some reason
+     # The first response is different for some reason, sometimes
     resp = requests.get(url=url, headers=header)
     if not resp.status_code == 200:
         raise ValueError(resp.text)
     respjson: dict = resp.json()
-    results.append(respjson["tracks"])
-    if not respjson["tracks"]["next"] == None:
-        url = respjson["tracks"]["next"]
-    else:
-        hasNext = False
+    try:
+        results.append(respjson["tracks"])
+        if not respjson["tracks"]["next"] == None:
+            url = respjson["tracks"]["next"]
+        else:
+            hasNext = False
+    except:
+        results.append(respjson)
+        if not respjson["next"] == None:
+            url = respjson["next"]
+        else:
+            hasNext = False
     while hasNext:
         resp = requests.get(url=url, headers=header)
         if not resp.status_code == 200:
