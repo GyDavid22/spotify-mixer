@@ -1,4 +1,4 @@
-class Songs:
+class Song:
     def __init__(self, title: str, artist: list[str], spotifyId: str, year: int, popularity: int) -> None:
         self.__title: str = title
         self.__artist: list[str] = artist
@@ -24,8 +24,8 @@ class Songs:
     def __str__(self) -> str:
         return f"{', '.join(self.getArtists())} - {self.getTitle()} ({self.getYear()})"
 
-def createSongList(source: list[dict]) -> list[Songs]:
-    songs: list[Songs] = []
+def createSongList(source: list[dict]) -> list[Song]:
+    songs: list[Song] = []
     for i in source:
         for j in i["items"]:
             title: str = j["track"]["name"]
@@ -35,5 +35,5 @@ def createSongList(source: list[dict]) -> list[Songs]:
             year: int = int(j["track"]["album"]["release_date"].split("-")[0])
             id: str = j["track"]["id"]
             popularity: int = j["track"]["popularity"]
-            songs.append(Songs(title, artists, id, year, popularity))
+            songs.append(Song(title, artists, id, year, popularity))
     return songs

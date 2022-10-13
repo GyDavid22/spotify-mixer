@@ -1,6 +1,6 @@
 import enum
-import songMethods
 import random
+from songsrelated import Song
 
 class RuleType(enum.Enum):
     ROOT = 0 # Don't use in your own rules!
@@ -13,18 +13,18 @@ class Rule:
         """Min and max values are inclusive!"""
         self.__type: RuleType = type
         self.__probability: int = probability # A number between 0 and 100 (percent value)
-        self.__songs: list[songMethods.Songs] = []
-        self.__playedSongs: list[songMethods.Songs] = []
-        self.__songsToPlay: list[songMethods.Songs] = []
+        self.__songs: list[Song] = []
+        self.__playedSongs: list[Song] = []
+        self.__songsToPlay: list[Song] = []
         self.__subrules: list[Rule] = sorted(subrules, key=Rule.getProbability)
         self.__finishBeforeRepeat: bool = finishBeforeRepeat
         self.__minValue: int = minValue
         self.__maxValue: int = maxValue
         self.__onRepeat = False
         if self.__type == RuleType.YEAR:
-            self.__comparefunc = songMethods.Songs.getYear
+            self.__comparefunc = Song.getYear
         elif self.__type == RuleType.POPULARITY:
-            self.__comparefunc = songMethods.Songs.getPopularity
+            self.__comparefunc = Song.getPopularity
 
     def getProbability(self) -> int:
         return self.__probability
@@ -32,13 +32,13 @@ class Rule:
     def getSubrules(self) -> list:
         return self.__subrules
 
-    def getSongs(self) -> list[songMethods.Songs]:
+    def getSongs(self) -> list[Song]:
         return self.__songs
 
     def getType(self) -> RuleType:
         return self.__type
 
-    def addSong(self, song: songMethods.Songs) -> None:
+    def addSong(self, song: Song) -> None:
         qualifying: bool
         try:
             qualifying = ((self.__minValue == None and self.__maxValue == None)
@@ -76,7 +76,7 @@ class Rule:
         else:
             return len(self.__playedSongs) == len(self.__songs)
 
-    def getNext(self) -> songMethods.Songs:
+    def getNext(self) -> Song:
         if not len(self.__subrules) == 0:
             selectedSubRule: int = random.randint(1, 100)
             bottom: int = 1
@@ -88,11 +88,10 @@ class Rule:
                 bottom = top + 1
         else:
             if self.__finishBeforeRepeat:
-                selected: songMethods.Songs = self.__songsToPlay.pop(0)
+                selected: Song = self.__songsToPlay.pop(0)
                 self.__playedSongs.append(selected)
                 if len(self.__songsToPlay) == 0:
                     self.getReady()
                 return selected
             else:
                 return self.__songsToPlay[random.randint(0, len(self.__songsToPlay) - 1)]
-
