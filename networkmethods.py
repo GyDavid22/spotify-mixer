@@ -6,6 +6,9 @@ import os
 
 from settings import Settings
 
+class PersistentStorage:
+    alreadyDownloaded: dict[str, list[dict]] = dict()
+
 def upload(uris: str, name: str):
     url: str = f"https://api.spotify.com/v1/users/{Settings.uid}/playlists"
     data = json.dumps({
@@ -71,12 +74,15 @@ def authenticate() -> None:
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": f"Basic {Settings.magic}"
     }
-    res: dict = requests.post(url, headers=headers, data=data).json()
+    res = requests.post(url, headers=headers, data=data)
     if not res.status_code == 200:
         raise ValueError(res.text)
-    Settings.token = res["access_token"]
+    Settings.token = res.json()["access_token"]
+    print()
 
-def req(playlistId: str) -> list[dict]:
+def download(playlistId: str) -> list[dict]:
+    if playlistId in PersistentStorage.alreadyDownloaded:
+        return PersistentStorage.alreadyDownloaded[playlistId]
     url: str = f"https://api.spotify.com/v1/playlists/{playlistId}/tracks"
     header: dict[str, str] = {
         "Authorization": f"Bearer {Settings.token}",
@@ -104,4 +110,5 @@ def req(playlistId: str) -> list[dict]:
             url = respjson["next"]
         else:
             hasNext = False
+    PersistentStorage.alreadyDownloaded[playlistId] = results
     return results

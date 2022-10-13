@@ -1,13 +1,15 @@
 from playlistsetting import PlaylistSetting
 from rulesrelated import *
-from songsrelated import Song
+from songsrelated import Song, createSongList
 from networkmethods import *
 from settings import loadRules
 
 class Mixer:
-    def createLists(songs: list[Song]) -> None:
-        resultsOfSettings: list[PlaylistSetting] = Mixer.prepare(songs)
+    def createLists() -> None:
+        resultsOfSettings: list[PlaylistSetting] = loadRules()
         for i in resultsOfSettings:
+            songs: list[Song] = createSongList(download(i.getSource()))
+            Mixer.prepare(songs, i)
             playlist: list[Song] = Mixer.mix(i.getRulesRoot())
             upload(",".join([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ]), i.getName())
 
@@ -17,14 +19,11 @@ class Mixer:
             playlist.append(root.getNext())
         return playlist
 
-    def prepare(songs: list[Song]) -> list[PlaylistSetting]:
-        roots: list[PlaylistSetting] = loadRules()
-        for i in roots:
-            if len(i.getRulesRoot().getSubrules()) == 0:
-                raise ValueError("There aren't any rules!")
-            Mixer.fillRules(songs, i.getRulesRoot())
-            Mixer.precheck(i.getRulesRoot())
-        return roots
+    def prepare(songs: list[Song], setting: PlaylistSetting) -> None:
+        if len(setting.getRulesRoot().getSubrules()) == 0:
+            raise ValueError("There aren't any rules!")
+        Mixer.fillRules(songs, setting.getRulesRoot())
+        Mixer.precheck(setting.getRulesRoot())
 
     def fillRules(songs: list[Song], rulesroot: Rule) -> None:
         for i in songs:
