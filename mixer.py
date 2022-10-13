@@ -9,9 +9,6 @@ class Mixer:
         resultsOfSettings: list[PlaylistSetting] = Mixer.prepare(songs)
         for i in resultsOfSettings:
             playlist: list[Song] = Mixer.mix(i.getRulesRoot())
-            print(f"Setting: {i.getName()}")
-            for j in range(len(playlist)):
-                print(f"{j + 1:>3}.: {playlist[j]}")
             upload(",".join([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ]), i.getName())
 
     def mix(root: Rule) -> list[Song]:
