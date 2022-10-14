@@ -4,7 +4,10 @@ from settings import *
 from mixer import *
 
 def main() -> None:
-    authenticate()
-    Mixer.createLists()
+    try:
+        authenticate()
+        Mixer.createLists()
+    except Exception as e:
+        print(e)
 
 main()
