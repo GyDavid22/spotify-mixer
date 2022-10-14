@@ -90,16 +90,11 @@ def download(playlistId: str) -> tuple[str, list[dict]]:
         respjson: dict = resp.json()
          # For some reason the responses I got weren't consistent all the time
         if "tracks" in respjson:
-            results.append(respjson["tracks"])
-            if not respjson["tracks"]["next"] == None:
-                url = respjson["tracks"]["next"]
-            else:
-                hasNext = False
+            respjson = respjson["tracks"]
+        results.append(respjson)
+        if not respjson["next"] == None:
+            url = respjson["next"]
         else:
-            results.append(respjson)
-            if not respjson["next"] == None:
-                url = respjson["next"]
-            else:
-                hasNext = False
+            hasNext = False
     DownloadHelper.alreadyDownloaded[playlistId] = results
     return (playlistId, results)
