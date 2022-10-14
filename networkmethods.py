@@ -72,7 +72,6 @@ def authenticate() -> None:
     if not res.status_code == 200:
         raise ValueError(res.text)
     Settings.token = res.json()["access_token"]
-    print()
 
 def download(playlistId: str) -> tuple[str, list[dict]]:
     if playlistId in DownloadHelper.alreadyDownloaded:
