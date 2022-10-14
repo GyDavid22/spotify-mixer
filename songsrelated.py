@@ -24,9 +24,14 @@ class Song:
     def __str__(self) -> str:
         return f"{', '.join(self.getArtists())} - {self.getTitle()} ({self.getYear()})"
 
-def createSongList(source: list[dict]) -> list[Song]:
+class GenerateHelper:
+    alreadyGenerated: dict[str, list[Song]] = dict()
+
+def createSongList(source: tuple[str, list[dict]]) -> list[Song]:
+    if source[0] in GenerateHelper.alreadyGenerated:
+        return GenerateHelper.alreadyGenerated[source[0]]
     songs: list[Song] = []
-    for i in source:
+    for i in source[1]:
         for j in i["items"]:
             title: str = j["track"]["name"]
             artists: list[str] = []
@@ -36,4 +41,5 @@ def createSongList(source: list[dict]) -> list[Song]:
             id: str = j["track"]["id"]
             popularity: int = j["track"]["popularity"]
             songs.append(Song(title, artists, id, year, popularity))
+    GenerateHelper.alreadyGenerated[source[0]] = songs
     return songs

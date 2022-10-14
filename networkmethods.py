@@ -6,10 +6,10 @@ import os
 
 from settings import Settings
 
-class PersistentStorage:
+class DownloadHelper:
     alreadyDownloaded: dict[str, list[dict]] = dict()
 
-def upload(uris: str, name: str):
+def upload(uris: str, name: str) -> None:
     url: str = f"https://api.spotify.com/v1/users/{Settings.uid}/playlists"
     data = json.dumps({
         "name": name,
@@ -22,7 +22,7 @@ def upload(uris: str, name: str):
     }
     res = requests.post(url, headers=header, data=data)
     id: str = res.json()["external_urls"]["spotify"].split("/")
-    id: str = id[len(id) - 1]
+    id = id[len(id) - 1]
     url = f"https://api.spotify.com/v1/playlists/{id}/tracks?uris="
     res = requests.post(url + uris, headers=header)
     if not res.status_code == 201:
@@ -50,18 +50,12 @@ def authenticate() -> None:
     (sock2, addr) = sock.accept()
     sock.close()
     response: list[str] = [ i.rstrip("\r") for i in sock2.recv(1024).decode().split("\n") ]
-    code: str = ""
-    for i in response:
-        try:
-            b = i.split(" ")
-            if b[0] == "GET":
-                code = b[1].lstrip("/?code=")
-        except:
-            pass
     sock2.send("HTTP/1.0 200 OK\n".encode())
     sock2.send("Content-Type: text/html\n\n".encode())
     sock2.send("You can close this window now.".encode())
     sock2.close()
+    get_req: list[str] = response[0].split(" ")
+    code: str = get_req[1].lstrip("/?code=")
 
      # Phase two
     url: str = "https://accounts.spotify.com/api/token"
@@ -80,9 +74,9 @@ def authenticate() -> None:
     Settings.token = res.json()["access_token"]
     print()
 
-def download(playlistId: str) -> list[dict]:
-    if playlistId in PersistentStorage.alreadyDownloaded:
-        return PersistentStorage.alreadyDownloaded[playlistId]
+def download(playlistId: str) -> tuple[str, list[dict]]:
+    if playlistId in DownloadHelper.alreadyDownloaded:
+        return (playlistId, DownloadHelper.alreadyDownloaded[playlistId])
     url: str = f"https://api.spotify.com/v1/playlists/{playlistId}/tracks"
     header: dict[str, str] = {
         "Authorization": f"Bearer {Settings.token}",
@@ -90,32 +84,23 @@ def download(playlistId: str) -> list[dict]:
     }
     results: list = []
     hasNext: bool = True
-     # The first response is different for some reason, sometimes
-    resp = requests.get(url=url, headers=header)
-    if not resp.status_code == 200:
-        raise ValueError(resp.text)
-    respjson: dict = resp.json()
-    try:
-        results.append(respjson["tracks"])
-        if not respjson["tracks"]["next"] == None:
-            url = respjson["tracks"]["next"]
-        else:
-            hasNext = False
-    except:
-        results.append(respjson)
-        if not respjson["next"] == None:
-            url = respjson["next"]
-        else:
-            hasNext = False
     while hasNext:
         resp = requests.get(url=url, headers=header)
         if not resp.status_code == 200:
             raise ValueError(resp.text)
         respjson: dict = resp.json()
-        results.append(respjson)
-        if not respjson["next"] == None:
-            url = respjson["next"]
+         # For some reason the responses I got weren't consistent all the time
+        if "tracks" in respjson:
+            results.append(respjson["tracks"])
+            if not respjson["tracks"]["next"] == None:
+                url = respjson["tracks"]["next"]
+            else:
+                hasNext = False
         else:
-            hasNext = False
-    PersistentStorage.alreadyDownloaded[playlistId] = results
-    return results
+            results.append(respjson)
+            if not respjson["next"] == None:
+                url = respjson["next"]
+            else:
+                hasNext = False
+    DownloadHelper.alreadyDownloaded[playlistId] = results
+    return (playlistId, results)
