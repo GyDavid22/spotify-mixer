@@ -1,4 +1,3 @@
-from email.mime import base
 import requests
 import json
 import urllib
