@@ -2,13 +2,13 @@ from rulesrelated import *
 from playlistsetting import *
 
 class Settings:
-    clientId: str = ""
-    magic: str = "" # "clientId:clientSecret" converted to base64
-    uid: str = "" # Your user id
+    clientId: str = "" # Your app's client ID
+    clientSecret: str = "" # Your app's client secret
+    uid: str = "" # Your user ID
 
 def loadRules() -> list[PlaylistSetting]:
     return [
-        PlaylistSetting("HotAC", "Spotify ID of a source playlist", [
+        PlaylistSetting("HotAC", "Spotify ID of a source playlist", 100, [
             Rule(RuleType.YEAR, 50, minValue=2020, subrules=[
                 Rule(RuleType.POPULARITY, 75, minValue=70),
                 Rule(RuleType.POPULARITY, 25, maxValue=69)

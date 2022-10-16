@@ -10,12 +10,12 @@ class Mixer:
         for i in resultsOfSettings:
             songs: list[Song] = createSongList(download(i.getSource()))
             Mixer.prepare(songs, i)
-            playlist: list[Song] = Mixer.mix(i.getRulesRoot())
-            upload(",".join([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ]), i.getName())
+            playlist: list[Song] = Mixer.mix(i.getRulesRoot(), i.getLength())
+            upload([ f"spotify:track:{i.getSpotifyId()}" for i in playlist ], i.getName())
 
-    def mix(root: Rule) -> list[Song]:
+    def mix(root: Rule, length: int) -> list[Song]:
         playlist: list[Song] = []
-        for i in range(100):
+        for _ in range(length):
             playlist.append(root.getNext())
         return playlist
 

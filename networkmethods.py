@@ -1,15 +1,17 @@
+from email.mime import base
 import requests
 import json
 import urllib
 import socket
 import os
+import base64
 
 from settings import Settings
 
 class DownloadHelper:
     alreadyDownloaded: dict[str, list[dict]] = dict()
 
-def upload(uris: str, name: str) -> None:
+def upload(uris: list[str], name: str) -> None:
     url: str = f"https://api.spotify.com/v1/users/{Settings.uid}/playlists"
     data = json.dumps({
         "name": name,
@@ -24,9 +26,22 @@ def upload(uris: str, name: str) -> None:
     id: str = res.json()["external_urls"]["spotify"].split("/")
     id = id[len(id) - 1]
     url = f"https://api.spotify.com/v1/playlists/{id}/tracks?uris="
-    res = requests.post(url + uris, headers=header)
-    if not res.status_code == 201:
-        raise ValueError(res.text)
+    bottom: int = 0
+    by: int = 100
+    if len(uris) < by:
+        top: int = len(uris)
+    else:
+        top: int = by
+    while bottom < len(uris):
+        sublist: str = ",".join(uris[bottom:top])
+        res = requests.post(url + sublist, headers=header)
+        if not res.status_code == 201:
+            raise ValueError(res.text)
+        bottom = top
+        if len(uris) < top + by:
+            top = len(uris)
+        else:
+            top += by
 
 def authenticate() -> None:
      # Phase one
@@ -66,7 +81,7 @@ def authenticate() -> None:
     }
     headers: dict[str, str] = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": f"Basic {Settings.magic}"
+        "Authorization": f"Basic " + base64.b64encode((f"{Settings.clientId}:{Settings.clientSecret}").encode()).decode()
     }
     res = requests.post(url, headers=headers, data=data)
     if not res.status_code == 200:
