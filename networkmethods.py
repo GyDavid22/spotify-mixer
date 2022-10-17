@@ -51,7 +51,7 @@ def authenticate() -> None:
         f"client_id={Settings.clientId}",
         "response_type=code",
         "redirect_uri=" + urllib.parse.quote(f"http://{ip}:{port}"),
-        "scope=" + urllib.parse.quote("playlist-modify-public playlist-modify-private playlist-read-private")
+        "scope=" + urllib.parse.quote("playlist-modify-public playlist-modify-private playlist-read-private user-library-read")
     ]
     url = url + "?" + "&".join(headers)
 
@@ -90,7 +90,10 @@ def authenticate() -> None:
 def download(playlistId: str) -> tuple[str, list[dict]]:
     if playlistId in DownloadHelper.alreadyDownloaded:
         return (playlistId, DownloadHelper.alreadyDownloaded[playlistId])
-    url: str = f"https://api.spotify.com/v1/playlists/{playlistId}/tracks"
+    if playlistId.lower() == "liked":
+        url: str = "https://api.spotify.com/v1/me/tracks"
+    else:
+        url: str = f"https://api.spotify.com/v1/playlists/{playlistId}/tracks"
     header: dict[str, str] = {
         "Authorization": f"Bearer {Settings.token}",
         "Content-Type": "application/json"
