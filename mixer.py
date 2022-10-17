@@ -15,22 +15,28 @@ class Mixer:
 
     def mix(root: Rule, length: int) -> list[Song]:
         playlist: list[Song] = []
-        for _ in range(length):
+        i: int = 0
+        while (length == -1 and (not root.allSongsSelected())) or i < length:
             playlist.append(root.getNext())
+            i += 1
         return playlist
 
     def prepare(songs: list[Song], setting: PlaylistSetting) -> None:
         if len(setting.getRulesRoot().getSubrules()) == 0:
             raise ValueError("There aren't any rules!")
         Mixer.fillRules(songs, setting.getRulesRoot())
-        Mixer.precheck(setting.getRulesRoot())
+        Mixer.precheck(setting=setting)
 
     def fillRules(songs: list[Song], rulesroot: Rule) -> None:
         for i in songs:
             rulesroot.addSong(i)
         rulesroot.getReady()
 
-    def precheck(rulesroot: Rule) -> None:
+    def precheck(setting: PlaylistSetting, rulesroot: Rule = None) -> None:
+        if rulesroot == None:
+            rulesroot: Rule = setting.getRulesRoot()
+        if setting.getLength() == -1 and (not rulesroot.shouldBeFinishedBeforeRepeat()):
+            raise ValueError("If playlist length is -1, then finishBeforeRepeat should be True for all rules!")
         if rulesroot.getType() == RuleType.ROOT:
             if len(rulesroot.getSubrules()) == 0:
                 raise ValueError("Root should contain rules!")
@@ -42,7 +48,7 @@ class Mixer:
                 probabilities += i.getProbability()
                 if i.getProbability() < 0 or i.getProbability() > 100:
                     raise ValueError("All probabilities must be between 0 and 100!")
-                Mixer.precheck(i)
+                Mixer.precheck(setting, i)
             if not probabilities == 100:
                 raise ValueError("Probabilities should add to 100 in each level of hierarchy!")
         else: 

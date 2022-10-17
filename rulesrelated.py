@@ -38,6 +38,9 @@ class Rule:
     def getType(self) -> RuleType:
         return self.__type
 
+    def shouldBeFinishedBeforeRepeat(self) -> bool:
+        return self.__finishBeforeRepeat
+
     def addSong(self, song: Song) -> None:
         qualifying: bool
         try:
@@ -74,7 +77,7 @@ class Rule:
                     return False
             return True
         else:
-            return len(self.__playedSongs) == len(self.__songs)
+            return self.__onRepeat
 
     def getNext(self) -> Song:
         if not len(self.__subrules) == 0:
@@ -92,6 +95,7 @@ class Rule:
                 self.__playedSongs.append(selected)
                 if len(self.__songsToPlay) == 0:
                     self.getReady()
+                    self.__onRepeat = True
                 return selected
             else:
                 return self.__songsToPlay[random.randint(0, len(self.__songsToPlay) - 1)]
