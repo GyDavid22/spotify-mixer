@@ -33,13 +33,20 @@ def createSongList(source: tuple[str, list[dict]]) -> list[Song]:
     songs: list[Song] = []
     for i in source[1]:
         for j in i["items"]:
-            title: str = j["track"]["name"]
-            artists: list[str] = []
-            for k in j["track"]["artists"]:
-                artists.append(k["name"])
-            year: int = int(j["track"]["album"]["release_date"].split("-")[0])
-            id: str = j["track"]["id"]
-            popularity: int = j["track"]["popularity"]
-            songs.append(Song(title, artists, id, year, popularity))
+            try:
+                title: str = j["track"]["name"]
+                artists: list[str] = []
+                for k in j["track"]["artists"]:
+                    artists.append(k["name"])
+                year: int = int(j["track"]["album"]["release_date"].split("-")[0])
+                id: str = j["track"]["id"]
+                popularity: int = j["track"]["popularity"]
+                songs.append(Song(title, artists, id, year, popularity))
+            except:
+                print(f"Track couldn't be processed: ", end="")
+                try:
+                    print(j["track"]["uri"])
+                except:
+                    print("n/a")
     GenerateHelper.alreadyGenerated[source[0]] = songs
     return songs

@@ -25,7 +25,7 @@ class Mixer:
         if len(setting.getRulesRoot().getSubrules()) == 0:
             raise ValueError("There aren't any rules!")
         Mixer.fillRules(songs, setting.getRulesRoot())
-        Mixer.precheck(setting=setting)
+        Mixer.precheck(setting)
 
     def fillRules(songs: list[Song], rulesroot: Rule) -> None:
         for i in songs:
