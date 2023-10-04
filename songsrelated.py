@@ -1,4 +1,5 @@
 class Song:
+    """Class to represent songs with their properties."""
     def __init__(self, title: str, artist: list[str], spotifyId: str, year: int, popularity: int) -> None:
         self.__title: str = title
         self.__artist: list[str] = artist
@@ -25,9 +26,13 @@ class Song:
         return f"{', '.join(self.getArtists())} - {self.getTitle()} ({self.getYear()})"
 
 class GenerateHelper:
+    """Static class to contain a dictionary, not to pollute the global namespace"""
     alreadyGenerated: dict[str, list[Song]] = dict()
+    """Dictionary to keep track of which playlists have been already processed into an object\n
+    Key is the ID of the playlist, value represents a downloaded playlist"""
 
 def createSongList(source: tuple[str, list[dict]]) -> list[Song]:
+    """Method to process data from API into a list of Song objects"""
     if source[0] in GenerateHelper.alreadyGenerated:
         return GenerateHelper.alreadyGenerated[source[0]]
     songs: list[Song] = []

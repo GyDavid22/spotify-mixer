@@ -8,16 +8,21 @@ class RuleType(enum.Enum):
     YEAR = 2
 
 class Rule:
+    """Class to represent a Rule"""
     def __init__(self, type: RuleType, probability: int, subrules: list = [], minValue: int = None, maxValue: int = None,
                  finishBeforeRepeat: bool = True) -> None:
         """Min and max values are inclusive!"""
         self.__type: RuleType = type
-        self.__probability: int = probability # A number between 0 and 100 (percent value)
+        self.__probability: int = probability
+        """A number between 0 and 100 (percent value)"""
         self.__songs: list[Song] = []
+        """All songs which fit this rule"""
         self.__playedSongs: list[Song] = []
+        """Songs which are already selected"""
         self.__songsToPlay: list[Song] = []
+        """Songs which wait to get selected"""
         self.__subrules: list[Rule] = sorted(subrules, key=Rule.getProbability)
-        self.__finishBeforeRepeat: bool = finishBeforeRepeat
+        self.__finishBeforeRepeat: bool = finishBeforeRepeat # Don't repeat songs in/under this rule until all songs are used
         self.__minValue: int = minValue
         self.__maxValue: int = maxValue
         self.__onRepeat = False
@@ -62,6 +67,7 @@ class Rule:
                 self.__songs.append(song)
 
     def getReady(self):
+        """Prepare Rule and subrules to mixing"""
         if not len(self.__subrules) == 0:
             for i in self.__subrules:
                 i.getReady()
@@ -71,6 +77,7 @@ class Rule:
             self.__playedSongs.clear()
 
     def allSongsSelected(self) -> bool:
+        """Are we just repeating as there are no unselected songs?"""
         if not len(self.__subrules) == 0:
             for i in self.__subrules:
                 if not i.allSongsSelected():
@@ -80,6 +87,7 @@ class Rule:
             return self.__onRepeat
 
     def getNext(self) -> Song:
+        """Get the next song from this rule/subrules"""
         if not len(self.__subrules) == 0:
             selectedSubRule: int = random.randint(1, 100)
             bottom: int = 1

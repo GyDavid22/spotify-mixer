@@ -8,9 +8,13 @@ import base64
 from settings import Settings
 
 class DownloadHelper:
+    """Static class to contain a dictionary, not to pollute the global namespace"""
     alreadyDownloaded: dict[str, list[dict]] = dict()
+    """Dictionary to keep track of which playlists have been already fetched\n
+    Key is the ID of the playlist, value represents a downloaded playlist"""
 
 def upload(uris: list[str], name: str) -> None:
+    """Method to upload a new generated playlist using REST API"""
     url: str = f"https://api.spotify.com/v1/users/{Settings.uid}/playlists"
     data = json.dumps({
         "name": name,
@@ -43,6 +47,7 @@ def upload(uris: list[str], name: str) -> None:
             top += by
 
 def authenticate() -> None:
+    """Method to authenticate user and get an access token"""
      # Phase one
     url: str = "https://accounts.spotify.com/authorize"
     ip: str = "localhost"
@@ -88,6 +93,7 @@ def authenticate() -> None:
     Settings.token = res.json()["access_token"]
 
 def download(playlistId: str) -> tuple[str, list[dict]]:
+    """Method to download playlist from Spotify using REST API"""
     if playlistId in DownloadHelper.alreadyDownloaded:
         return (playlistId, DownloadHelper.alreadyDownloaded[playlistId])
     if playlistId.lower() == "liked":

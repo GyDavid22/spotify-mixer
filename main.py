@@ -4,6 +4,7 @@ from settings import *
 from mixer import *
 
 def main() -> None:
+    """Entry point of the program."""
     try:
         authenticate()
         Mixer.createLists()

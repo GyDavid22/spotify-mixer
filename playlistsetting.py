@@ -1,6 +1,7 @@
 from rulesrelated import *
 
 class PlaylistSetting:
+    """Class to represent a playlist to make, mostly containing Rules"""
     def __init__(self, name: str, source: str, length: int, rules: list[Rule]) -> None:
         """Give a name to the setting and give it the Spotify ID of the base playlist"""
         self.__name: str = name
