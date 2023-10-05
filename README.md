@@ -14,7 +14,7 @@ The current feature set works well, if you create a Spotify application on the d
 
 ## Available settings:
 ### Rules:
- - Type: YEAR/POPULARITY (a number between 0 and 1)
+ - Type: YEAR/POPULARITY (a number between 0 and 100)
  - min
  - max
  - (between min and max the user has to choose at least one, they are both inclusive)
