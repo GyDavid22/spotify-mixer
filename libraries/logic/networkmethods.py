@@ -52,6 +52,19 @@ def upload(uris: list[str], name: str) -> None:
 def authenticate() -> None:
     """Method to authenticate user and get an access token"""
     log("Beginning authentication.")
+    response_page = ""
+    try:
+        f = open("assets/succesful_authentication.html", "rt", encoding="utf-8")
+        try:
+            response_page = f.read()
+        except:
+            raise ValueError()
+        finally:
+            f.close()
+    except OSError:
+        log("Failed to load successful_authentication.html. Using hardcoded string as a fallback.")
+        response_page = "You can close this window now."
+
      # Phase one
     url: str = "https://accounts.spotify.com/authorize"
     ip: str = "localhost"
@@ -74,8 +87,8 @@ def authenticate() -> None:
     sock.close()
     response: list[str] = [ i.rstrip("\r") for i in sock2.recv(1024).decode().split("\n") ]
     sock2.send("HTTP/1.0 200 OK\n".encode())
-    sock2.send("Content-Type: text/html\n\n".encode())
-    sock2.send("You can close this window now.".encode())
+    sock2.send("Content-Type: text/html;charset=UTF-8\n\n".encode())
+    sock2.send(response_page.encode())
     sock2.close()
     get_req: list[str] = response[0].split(" ")
     code: str = get_req[1].lstrip("/?code=")
