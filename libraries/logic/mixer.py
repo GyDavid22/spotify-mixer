@@ -1,9 +1,9 @@
 from libraries.structures.playlistsetting import PlaylistSetting
 from libraries.structures.rulesrelated import *
 from libraries.structures.songsrelated import Song, createSongList
-from networkmethods import *
+from libraries.logic.networkmethods import *
 from settings import loadRules
-from logger import log
+from libraries.logic.logger import log
 
 class Mixer:
     """Class to contain mixing related stuff"""

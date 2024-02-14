@@ -1,4 +1,4 @@
-from rulesrelated import *
+from libraries.structures.rulesrelated import *
 
 class PlaylistSetting:
     """Class to represent a playlist to make, mostly containing Rules"""

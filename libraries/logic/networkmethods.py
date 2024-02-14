@@ -6,7 +6,7 @@ import os
 import base64
 
 from settings import Settings
-from logger import log
+from libraries.logic.logger import log
 
 class DownloadHelper:
     """Static class to contain a dictionary, not to pollute the global namespace"""

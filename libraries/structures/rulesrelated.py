@@ -1,6 +1,6 @@
 import enum
 import random
-from songsrelated import Song
+from libraries.structures.songsrelated import Song
 
 class RuleType(enum.Enum):
     ROOT = 0 # Don't use in your own rules!
