@@ -20,3 +20,6 @@ class PlaylistSetting:
 
     def getRulesRoot(self) -> Rule:
         return self.__rulesroot
+    
+    def __str__(self) -> str:
+        return f"Setting: name: {self.getName()}, source: {self.getSource()}, length: {self.getLength()}\n{self.getRulesRoot()}"

@@ -6,6 +6,7 @@ import os
 import base64
 
 from settings import Settings
+from logger import log
 
 class DownloadHelper:
     """Static class to contain a dictionary, not to pollute the global namespace"""
@@ -15,6 +16,7 @@ class DownloadHelper:
 
 def upload(uris: list[str], name: str) -> None:
     """Method to upload a new generated playlist using REST API"""
+    log(f"Uploading generated playlist: {name}")
     url: str = f"https://api.spotify.com/v1/users/{Settings.uid}/playlists"
     data = json.dumps({
         "name": name,
@@ -45,9 +47,11 @@ def upload(uris: list[str], name: str) -> None:
             top = len(uris)
         else:
             top += by
+    log("Upload successful.")
 
 def authenticate() -> None:
     """Method to authenticate user and get an access token"""
+    log("Beginning authentication.")
      # Phase one
     url: str = "https://accounts.spotify.com/authorize"
     ip: str = "localhost"
@@ -91,9 +95,11 @@ def authenticate() -> None:
     if not res.status_code == 200:
         raise ValueError(res.text)
     Settings.token = res.json()["access_token"]
+    log("Authentication successful.")
 
 def download(playlistId: str) -> tuple[str, list[dict]]:
     """Method to download playlist from Spotify using REST API"""
+    log(f"Fetching playlist: {playlistId}")
     if playlistId in DownloadHelper.alreadyDownloaded:
         return (playlistId, DownloadHelper.alreadyDownloaded[playlistId])
     if playlistId.lower() == "liked":
@@ -120,4 +126,5 @@ def download(playlistId: str) -> tuple[str, list[dict]]:
         else:
             hasNext = False
     DownloadHelper.alreadyDownloaded[playlistId] = results
+    log("Fetching successful.")
     return (playlistId, results)

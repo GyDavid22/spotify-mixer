@@ -3,6 +3,7 @@ from rulesrelated import *
 from songsrelated import Song, createSongList
 from networkmethods import *
 from settings import loadRules
+from logger import log
 
 class Mixer:
     """Class to contain mixing related stuff"""
@@ -30,6 +31,7 @@ class Mixer:
             raise ValueError("There aren't any rules!")
         Mixer.fillRules(songs, setting.getRulesRoot())
         Mixer.precheck(setting)
+        log(setting)
 
     def fillRules(songs: list[Song], rulesroot: Rule) -> None:
         """Fill up Rule leaves with songs"""

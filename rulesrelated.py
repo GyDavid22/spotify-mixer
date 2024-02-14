@@ -107,3 +107,12 @@ class Rule:
                 return selected
             else:
                 return self.__songsToPlay[random.randint(0, len(self.__songsToPlay) - 1)]
+            
+    def __str__(self) -> str:
+        returnValue: str = f"Rule: probability: {self.getProbability()}, type: {self.getType().name}, min: {self.__minValue}, max: {self.__maxValue}, finishBeforeRepeat: {self.__finishBeforeRepeat}{f', qualified songs: {len(self.__songs)}' if len(self.__songs) > 0 else ''}\n"
+        subrules: str = ""
+        for i in self.getSubrules():
+            subrules += str(i)
+        if not subrules == "":
+            returnValue += "".join([ f"    {i}\n" for i in subrules.split("\n")])
+        return returnValue

@@ -2,6 +2,7 @@ from rulesrelated import *
 from playlistsetting import *
 
 class Settings:
+    verbose: bool = True
     clientId: str = "" # Your app's client ID
     clientSecret: str = "" # Your app's client secret
     uid: str = "" # Your user ID
