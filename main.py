@@ -1,10 +1,10 @@
 import sys
 
-from networkmethods import *
-from songsrelated import *
+from libraries.logic.networkmethods import *
+from libraries.structures.songsrelated import *
 from settings import *
-from mixer import *
-from logger import log
+from libraries.logic.mixer import *
+from libraries.logic.logger import log
 
 def main() -> None:
     """Entry point of the program."""

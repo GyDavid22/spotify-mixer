@@ -1,5 +1,5 @@
-from rulesrelated import *
-from playlistsetting import *
+from libraries.structures.rulesrelated import *
+from libraries.structures.playlistsetting import *
 
 class Settings:
     verbose: bool = True

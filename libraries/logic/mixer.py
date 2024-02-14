@@ -1,6 +1,6 @@
-from playlistsetting import PlaylistSetting
-from rulesrelated import *
-from songsrelated import Song, createSongList
+from libraries.structures.playlistsetting import PlaylistSetting
+from libraries.structures.rulesrelated import *
+from libraries.structures.songsrelated import Song, createSongList
 from networkmethods import *
 from settings import loadRules
 from logger import log
