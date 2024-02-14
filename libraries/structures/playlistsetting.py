@@ -1,4 +1,4 @@
-from rulesrelated import *
+from libraries.structures.rulesrelated import *
 
 class PlaylistSetting:
     """Class to represent a playlist to make, mostly containing Rules"""
@@ -20,3 +20,6 @@ class PlaylistSetting:
 
     def getRulesRoot(self) -> Rule:
         return self.__rulesroot
+    
+    def __str__(self) -> str:
+        return f"Setting: name: {self.getName()}, source: {self.getSource()}, length: {self.getLength()}\n{self.getRulesRoot()}"

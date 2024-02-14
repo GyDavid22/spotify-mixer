@@ -1,3 +1,5 @@
+import sys
+
 class Song:
     """Class to represent songs with their properties."""
     def __init__(self, title: str, artist: list[str], spotifyId: str, year: int, popularity: int) -> None:
@@ -48,10 +50,10 @@ def createSongList(source: tuple[str, list[dict]]) -> list[Song]:
                 popularity: int = j["track"]["popularity"]
                 songs.append(Song(title, artists, id, year, popularity))
             except:
-                print(f"Track couldn't be processed: ", end="")
+                print(f"Track couldn't be processed: ", end="", file=sys.stderr)
                 try:
-                    print(j["track"]["uri"])
+                    print(j["track"]["uri"], file=sys.stderr)
                 except:
-                    print("n/a")
+                    print("n/a", file=sys.stderr)
     GenerateHelper.alreadyGenerated[source[0]] = songs
     return songs
