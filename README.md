@@ -3,7 +3,7 @@
 
 An open-source tool to generate new playlists from existing ones by your own rules.
 
-WIP
+This project is rewritten and continued here: https://github.com/GyDavid22/spotify-mixer-react
 
 The goal of this program is that the user defines rules, in which it defines a source playlist (the user must have at least read-only access to it), some rules and the result will be a new playlist, uploaded to the Spotify account of the user, which is a "remixed" version of the original one, thus having a playlist, which is not all random as it has predefined ratios. Rules have a type (e.g. year), a min and a max parameter (if any of that is left empty, the interval is open on one way) and a probability (see below). For a better view see the prepared settings.py in the source code.
 
